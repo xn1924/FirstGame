@@ -21,6 +21,24 @@
     <ClCompile Include="..\Classes\HelloWorldScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AnimateScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GraphicsScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\KeyboardScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MouseScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MultiTouch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TouchScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -32,10 +50,69 @@
     <ClInclude Include="..\Classes\HelloWorldScene.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\AnimateScene.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GraphicsScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\KeyboardScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MouseScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MultiTouch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TouchScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
       <Filter>resource</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\10000.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10001.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10002.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10003.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10004.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10005.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10006.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\10007.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\autobot.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\CloseNormal.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\CloseSelected.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\decepticon.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\HelloWorld.png">
+      <Filter>resource</Filter>
+    </Image>
   </ItemGroup>
 </Project>

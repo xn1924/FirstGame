@@ -8,7 +8,7 @@
 
 #ifndef AnimateScene_hpp
 #define AnimateScene_hpp
-
+#include "cocos2d.h"
 class AnimateScene : public cocos2d::Layer
 {
 public:
