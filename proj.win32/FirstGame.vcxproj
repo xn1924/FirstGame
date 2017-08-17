@@ -184,14 +184,6 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ResourceCompile Include="game.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Resources\10000.png" />
-    <Image Include="..\Resources\10001.png" />
-    <Image Include="..\Resources\10002.png" />
-    <Image Include="..\Resources\10003.png" />
-    <Image Include="..\Resources\10004.png" />
-    <Image Include="..\Resources\10005.png" />
-    <Image Include="..\Resources\10006.png" />
-    <Image Include="..\Resources\10007.png" />
     <Image Include="..\Resources\autobot.png" />
     <Image Include="..\Resources\CloseNormal.png" />
     <Image Include="..\Resources\CloseSelected.png" />

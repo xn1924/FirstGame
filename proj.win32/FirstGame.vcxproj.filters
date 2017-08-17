@@ -75,30 +75,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Resources\10000.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10001.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10002.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10003.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10004.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10005.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10006.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\Resources\10007.png">
-      <Filter>resource</Filter>
-    </Image>
     <Image Include="..\Resources\autobot.png">
       <Filter>resource</Filter>
     </Image>
