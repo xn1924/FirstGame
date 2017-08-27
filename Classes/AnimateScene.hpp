@@ -9,6 +9,8 @@
 #ifndef AnimateScene_hpp
 #define AnimateScene_hpp
 #include "cocos2d.h"
+#include "Actor.h"
+
 class AnimateScene : public cocos2d::Layer
 {
 public:
@@ -18,10 +20,8 @@ public:
     CREATE_FUNC(AnimateScene);
 
 private:
-	 cocos2d::Sprite* createSprite(cocos2d::Vec2 pos,bool flip=false);
-	 cocos2d::Animate* createAnimate(const std::vector<std::string>& names,float delay);
-	 cocos2d::Animate* createAnimate(const std::string& prefix, const int& count,float delay=0.1f,std::string type=".png",bool reverse=false);
+	 Actor* createActor(cocos2d::Vec2 pos, int pos_combat);
 
-	 void triggerAttack(cocos2d::Sprite* attacker, cocos2d::Sprite* receiver);
+	 void triggerAttack(Actor* attacker, Actor* receiver);
 };
 #endif /* AnimateScene_hpp */

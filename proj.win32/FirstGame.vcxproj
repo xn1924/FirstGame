@@ -67,6 +67,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\workspace\cocos_projs\FirstGame\ThirdParties\jsoncpp</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
@@ -147,25 +148,33 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Classes\Actor.cpp" />
     <ClCompile Include="..\Classes\AnimateScene.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\GraphicsScene.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\KeyboardScene.cpp" />
+    <ClCompile Include="..\Classes\Magic.cpp" />
     <ClCompile Include="..\Classes\MouseScene.cpp" />
     <ClCompile Include="..\Classes\MultiTouch.cpp" />
     <ClCompile Include="..\Classes\TouchScene.cpp" />
+    <ClCompile Include="..\ThirdParties\jsoncpp\jsoncpp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Classes\Actor.h" />
     <ClInclude Include="..\Classes\AnimateScene.hpp" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\GraphicsScene.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\KeyboardScene.h" />
+    <ClInclude Include="..\Classes\Magic.h" />
     <ClInclude Include="..\Classes\MouseScene.h" />
     <ClInclude Include="..\Classes\MultiTouch.h" />
     <ClInclude Include="..\Classes\TouchScene.h" />
+    <ClInclude Include="..\ThirdParties\jsoncpp\json\json-forwards.h" />
+    <ClInclude Include="..\ThirdParties\jsoncpp\json\json.h" />
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

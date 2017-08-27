@@ -39,7 +39,7 @@ bool MultiTouch::init()
             touchLabel->setVisible(false);
         });
         
-        for (int i = 0; i < touches.size(); ++i) {
+        for ( int i = 0; i < touches.size(); ++i) {
             labelTouchLocations[i]->setPosition(touches[i]->getLocation());
             labelTouchLocations[i]->setVisible(true);
             labelTouchLocations[i]->setString("Touched");

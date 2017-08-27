@@ -10,6 +10,18 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ThirdParties">
+      <UniqueIdentifier>{6991c47e-13db-436a-b23e-e5fb16ae6cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ThirdParties\jsoncpp">
+      <UniqueIdentifier>{14f249ba-6450-4698-93fb-0931ac45fa8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\scenes">
+      <UniqueIdentifier>{7be319df-315d-4c00-9d81-cda5c3af787f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\sprites">
+      <UniqueIdentifier>{3f379813-e893-4c71-a7b7-944c454064f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -18,26 +30,35 @@
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\ThirdParties\jsoncpp\jsoncpp.cpp">
+      <Filter>src\ThirdParties\jsoncpp</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\AnimateScene.cpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GraphicsScene.cpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
+      <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\KeyboardScene.cpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\MouseScene.cpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\MultiTouch.cpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TouchScene.cpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Actor.cpp">
+      <Filter>src\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Magic.cpp">
+      <Filter>src\sprites</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,26 +68,39 @@
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\HelloWorldScene.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\ThirdParties\jsoncpp\json\json.h">
+      <Filter>src\ThirdParties\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParties\jsoncpp\json\json-forwards.h">
+      <Filter>src\ThirdParties\jsoncpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AnimateScene.hpp">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GraphicsScene.h">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HelloWorldScene.h">
+      <Filter>src\scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\KeyboardScene.h">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MouseScene.h">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MultiTouch.h">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TouchScene.h">
-      <Filter>src</Filter>
+      <Filter>src\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="..\Classes\Actor.h">
+      <Filter>src\sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Magic.h">
+      <Filter>src\sprites</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
