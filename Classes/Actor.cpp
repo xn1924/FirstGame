@@ -1,10 +1,13 @@
 #include "Actor.h"
 #include "Magic.h"
-
+#include "ActorParser.h"
 #include <fstream>
 USING_NS_CC;
 using namespace std;
 #define TAG_IDLE 10
+
+int calDirection(Vec2 dir);
+
 bool Actor::init()
 {
 	if (!Sprite::init()) {
@@ -13,32 +16,19 @@ bool Actor::init()
 	return true;
 }
 
-Actor* Actor::createActor(std::string path, int pos_combat)
-{
-	stringstream ss;
-	ss << path << "animate.json";
-	std::string p = ss.str();
-	std::ifstream ifs;
-	ifs.open(ss.str());
-	assert(ifs.is_open());
-
-	Json::Reader reader;
-	Json::Value root;
-	if (!reader.parse(ifs, root, false))
-	{
-		return nullptr;
-	}
-	
-		
+Actor* Actor::createActor(int index)
+{		
 	auto actor = Actor::create();
+	actor->id = index;
+
+	Json::Value root = ActorParser::getValueForActor(index,actor->path);
+
 	actor->setFlippedY(true);
-	actor->path = path;
-	actor->pos_combat = pos_combat;
+
 	actor->id = root["id"].asInt();
 	actor->name = root["name"].asString();
 	actor->anim = root["combat_anim"];
 
-	actor->idle();
 	return actor;
 }
 Animate* Actor::createAnimate(const std::vector<std::string>& names, float delay/*=0.1f*/)
@@ -46,6 +36,7 @@ Animate* Actor::createAnimate(const std::vector<std::string>& names, float delay
 	Vector<SpriteFrame*> animFrames;
 	for (auto iter = names.cbegin(); iter != names.cend(); iter++) {
 		Texture2D *texture = _director->getTextureCache()->addImage(*iter);
+		//texture->setAliasTexParameters();
 		Rect rect = Rect::ZERO;
 		rect.size = texture->getContentSize();
 		animFrames.pushBack(SpriteFrame::createWithTexture(texture, rect));
@@ -67,6 +58,10 @@ Animate* Actor::createAnimate(const std::string& prefix, const int& count, float
 			ss << path << prefix << index << type;
 		names.push_back(ss.str());
 	}
+	//if (!getTexture())
+	//{
+		setTexture(names[0]);
+	//}
 	return createAnimate(names, delay);
 }
 
@@ -76,7 +71,7 @@ void Actor::idle()
 	idle->setTag(TAG_IDLE);
 	runAction(idle);
 }
-void Actor::suffer()
+void Actor::suffer(float time)
 {
 	auto magic = Magic::createMagic("mhxy/magic1/");
 	magic->setAnchorPoint(Vec2(0,0));
@@ -91,7 +86,7 @@ void Actor::suffer()
 
 	auto suffer = createAnimate(anim["suffer"]["indexes"][pos_combat].asString(), anim["suffer"]["numbers"][pos_combat].asInt());
 
-	auto delay = DelayTime::create(1.3);
+	auto delay = DelayTime::create(time);
 
 	auto after_delay = CallFunc::create([=]() {
 		stopActionByTag(TAG_IDLE);
@@ -113,13 +108,22 @@ void Actor::dead()
 {
 	runAction(createAnimate(anim["dead"]["indexes"][pos_combat].asString(), anim["dead"]["numbers"][pos_combat].asInt()));
 }
-void Actor::attack(Actor* target)
+
+void Actor::stand(int type)
 {
+	auto stand = RepeatForever::create(createAnimate(anim["stand"]["indexes"][type].asString(), anim["stand"]["numbers"][type].asInt()));
+
+	runAction(stand);
+}
+void Actor::attack(Actor* target, int type, const AttackCallBack& callback)
+{
+	setStatus(CombatStatus::ON_ATTACK);
 
 	stopAllActions();
 	//attacker¶¯»­
-
-	Vec2 movement = target->getPosition() - Vec2(0, 25) - (getPosition() - Vec2(90, 0));
+	Vec2 offsetPos = pos_combat == 0 ? Vec2(110, -40) : Vec2(-90, 50);
+	Vec2 targetPos = target->getPosition() + offsetPos;
+	Vec2 movement = targetPos - getPosition();
 	//Vec2 movement = target->getPosition() - getPosition();
 	//movement = movement.getNormalized()*(movement.getLength() - 100);
 
@@ -128,62 +132,76 @@ void Actor::attack(Actor* target)
 
 	auto combat_forward = createAnimate(anim["forward"]["indexes"][pos_combat].asString(), anim["forward"]["numbers"][pos_combat].asInt());
 	auto combat_back = createAnimate(anim["back"]["indexes"][(pos_combat + 2) % 4].asString(), anim["back"]["numbers"][(pos_combat + 2) % 4].asInt());
-	auto combat_action = createAnimate(anim["attacks"][2]["indexes"][pos_combat].asString(), anim["attacks"][2]["numbers"][pos_combat].asInt());
-
+	auto combat_action = createAnimate(anim["attacks"][type]["indexes"][pos_combat].asString(), anim["attacks"][type]["numbers"][pos_combat].asInt());
 
 	auto forward_spawn = Spawn::createWithTwoActions(move_forward, combat_forward);
 	auto back_spawn = Spawn::createWithTwoActions(move_back, combat_back);
 	auto finish = CallFunc::create([=]() {
 		idle();
+		setStatus(CombatStatus::UNPREPARED);
+		callback();
+		//target->attack(this, 1);
 	});
 
-	auto seq = Sequence::create(forward_spawn, combat_action, back_spawn, finish, nullptr);
+	auto test = CallFunc::create([=]() {
+		Size sz = getContentSize();
+		auto bar = getChildByTag(100);
+		bar->setPosition(Vec2(sz.width / 2 + 50, sz.height + 20));
+	});
+	auto test1 = CallFunc::create([=]() {
+		Size sz = getContentSize();
+		auto bar = getChildByTag(100);
+		bar->setPosition(Vec2(sz.width / 2 , sz.height));
+	});
+	auto seq = Sequence::create(forward_spawn, test,combat_action, back_spawn,  finish, test1, nullptr);
 	runAction(seq);
 
 	//target¶¯»­
-	target->suffer();
+	float time = anim["attacks"][type]["key_time"][pos_combat].asFloat();
+	target->suffer(time);
 }
 
-//actor->forward_0 = actor->createAnimate(anim["forward"]["indexes"][0].asString(), anim["forward"]["numbers"][0].asInt());
-//actor->forward_1 = actor->createAnimate(anim["forward"]["indexes"][1].asString(), anim["forward"]["numbers"][1].asInt());
-//actor->forward_2 = actor->createAnimate(anim["forward"]["indexes"][2].asString(), anim["forward"]["numbers"][2].asInt());
-//actor->forward_3 = actor->createAnimate(anim["forward"]["indexes"][3].asString(), anim["forward"]["numbers"][3].asInt());
-//
-//actor->back_0 = actor->createAnimate(anim["back"]["indexes"][0].asString(), anim["back"]["numbers"][0].asInt());
-//actor->back_1 = actor->createAnimate(anim["back"]["indexes"][1].asString(), anim["back"]["numbers"][1].asInt());
-//actor->back_2 = actor->createAnimate(anim["back"]["indexes"][2].asString(), anim["back"]["numbers"][2].asInt());
-//actor->back_3 = actor->createAnimate(anim["back"]["indexes"][3].asString(), anim["back"]["numbers"][3].asInt());
-//
-//actor->suffer_0 = actor->createAnimate(anim["suffer"]["indexes"][0].asString(), anim["suffer"]["numbers"][0].asInt());
-//actor->suffer_1 = actor->createAnimate(anim["suffer"]["indexes"][1].asString(), anim["suffer"]["numbers"][1].asInt());
-//actor->suffer_2 = actor->createAnimate(anim["suffer"]["indexes"][2].asString(), anim["suffer"]["numbers"][2].asInt());
-//actor->suffer_3 = actor->createAnimate(anim["suffer"]["indexes"][3].asString(), anim["suffer"]["numbers"][3].asInt());
-//
-//actor->defend_0 = actor->createAnimate(anim["defend"]["indexes"][0].asString(), anim["defend"]["numbers"][0].asInt());
-//actor->defend_1 = actor->createAnimate(anim["defend"]["indexes"][1].asString(), anim["defend"]["numbers"][1].asInt());
-//actor->defend_2 = actor->createAnimate(anim["defend"]["indexes"][2].asString(), anim["defend"]["numbers"][2].asInt());
-//actor->defend_3 = actor->createAnimate(anim["defend"]["indexes"][3].asString(), anim["defend"]["numbers"][3].asInt());
-//
-//actor->dead_0 = actor->createAnimate(anim["dead"]["indexes"][0].asString(), anim["dead"]["numbers"][0].asInt());
-//actor->dead_1 = actor->createAnimate(anim["dead"]["indexes"][1].asString(), anim["dead"]["numbers"][1].asInt());
-//actor->dead_2 = actor->createAnimate(anim["dead"]["indexes"][2].asString(), anim["dead"]["numbers"][2].asInt());
-//actor->dead_3 = actor->createAnimate(anim["dead"]["indexes"][3].asString(), anim["dead"]["numbers"][3].asInt());
-//
-//actor->idle_0 = actor->createAnimate(anim["idle"]["indexes"][0].asString(), anim["idle"]["numbers"][0].asInt());
-//actor->idle_1 = actor->createAnimate(anim["idle"]["indexes"][1].asString(), anim["idle"]["numbers"][1].asInt());
-//actor->idle_2 = actor->createAnimate(anim["idle"]["indexes"][2].asString(), anim["idle"]["numbers"][2].asInt());
-//actor->idle_3 = actor->createAnimate(anim["idle"]["indexes"][3].asString(), anim["idle"]["numbers"][3].asInt());
-//
-//
-//Json::Value attacks = anim["attacks"];
-//int size = attacks.size();
-//std::vector<cocos2d::Animate*> attack_list;
-//attack_list.reserve(size * 4);
-//for (int i = 0; i<size; ++i)
-//{
-//	attack_list.push_back(actor->createAnimate(attacks[i]["indexes"][0].asString(), attacks[i]["numbers"][0].asInt()));
-//	attack_list.push_back(actor->createAnimate(attacks[i]["indexes"][1].asString(), attacks[i]["numbers"][1].asInt()));
-//	attack_list.push_back(actor->createAnimate(attacks[i]["indexes"][2].asString(), attacks[i]["numbers"][2].asInt()));
-//	attack_list.push_back(actor->createAnimate(attacks[i]["indexes"][3].asString(), attacks[i]["numbers"][3].asInt()));
-//}
-//actor->attackList = attack_list;
+void Actor::walk(Vec2 target, bool canMove) {
+	stopAllActions();
+
+	Vec2 dir = target - getPosition();
+	int type = calDirection(dir);
+
+	auto move_action = RepeatForever::create(createAnimate(anim["walk"]["indexes"][type].asString(), anim["walk"]["numbers"][type].asInt()));
+	runAction(move_action);
+
+	auto move_forward = canMove ? (FiniteTimeAction *)MoveBy::create(dir.length() / 100, dir) : (FiniteTimeAction *)DelayTime::create(dir.length() / 100);
+
+	auto finish = CallFunc::create([=]() {
+		stopAllActions();
+		stand(type);
+	});
+
+	auto seq = Sequence::create(move_forward, finish, nullptr);
+	runAction(seq);
+
+}
+
+//private
+int calDirection(Vec2 dir) {
+	int type = 0;
+	if (dir.x == 0) {
+		type = dir.y > 0 ? 2 : 6;
+	}
+	else if (dir.y == 0) {
+		type = dir.x > 0 ? 4 : 0;
+	}
+	else if (dir.x > 0 && dir.y > 0) {
+		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 2 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 3 : 4;
+	}
+	else if (dir.x > 0 && dir.y < 0) {
+		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 6 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 5 : 4;
+	}
+	else if (dir.x < 0 && dir.y > 0) {
+		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 2 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 1 : 0;
+	}
+	else if (dir.x < 0 && dir.y < 0) {
+		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 6 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 7 : 0;
+	}
+	return type;
+}

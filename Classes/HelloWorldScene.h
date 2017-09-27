@@ -1,5 +1,6 @@
 #pragma once
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
 class HelloWorld : public cocos2d::Layer
 {
@@ -11,5 +12,7 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+
+	void touchEvent(cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type);
 };
 

@@ -22,6 +22,15 @@
     <Filter Include="src\sprites">
       <UniqueIdentifier>{3f379813-e893-4c71-a7b7-944c454064f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{9656fe40-511e-419b-bfa3-07636dcc86b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils\parser">
+      <UniqueIdentifier>{928ab917-2a68-4ff7-b029-1cbbcccc348a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{52452038-8d30-4e61-b095-8ec3459b00d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -33,32 +42,23 @@
     <ClCompile Include="..\ThirdParties\jsoncpp\jsoncpp.cpp">
       <Filter>src\ThirdParties\jsoncpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\AnimateScene.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GraphicsScene.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\KeyboardScene.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\MouseScene.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\MultiTouch.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\TouchScene.cpp">
-      <Filter>src\scenes</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Actor.cpp">
       <Filter>src\sprites</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Magic.cpp">
       <Filter>src\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ActorParser.cpp">
+      <Filter>src\utils\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MapScene.cpp">
+      <Filter>src\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CombatScene.cpp">
+      <Filter>src\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MainPanel.cpp">
+      <Filter>src\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,33 +74,23 @@
     <ClInclude Include="..\ThirdParties\jsoncpp\json\json-forwards.h">
       <Filter>src\ThirdParties\jsoncpp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\AnimateScene.hpp">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GraphicsScene.h">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\HelloWorldScene.h">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\KeyboardScene.h">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\MouseScene.h">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\MultiTouch.h">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\TouchScene.h">
-      <Filter>src\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Actor.h" />
     <ClInclude Include="..\Classes\Actor.h">
       <Filter>src\sprites</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Magic.h">
       <Filter>src\sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ActorParser.h">
+      <Filter>src\utils\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MapScene.h">
+      <Filter>src\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CombatScene.h">
+      <Filter>src\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MainPanel.h">
+      <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

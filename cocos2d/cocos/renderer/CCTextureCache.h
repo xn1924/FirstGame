@@ -61,7 +61,7 @@ NS_CC_BEGIN
 */
 class CC_DLL TextureCache : public Ref
 {
-public:
+public:	
     /** Returns the shared instance of the cache. */
     CC_DEPRECATED_ATTRIBUTE static TextureCache * getInstance();
 

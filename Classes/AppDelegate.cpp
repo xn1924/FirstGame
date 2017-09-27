@@ -5,7 +5,12 @@
 #include "MultiTouch.h"
 #include "MouseScene.h"
 #include "KeyboardScene.h"
-#include "AnimateScene.hpp"
+#include "CombatScene.h"
+#include "MapScene.h"
+
+#ifdef WIN32
+#pragma execution_character_set("utf-8")
+#endif
 
 USING_NS_CC;
 
@@ -30,14 +35,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("Hello World");
-        //glview->setFrameSize(640, 480);
+        glview = GLViewImpl::create("梦幻西游");
+
+		//屏幕和设计分辨率不匹配，会导致UI交互事件Touch坐标异常
+        glview->setFrameSize(800, 600);//屏幕分辨率
+		glview->setDesignResolutionSize(800, 600, ResolutionPolicy::EXACT_FIT);//设计分辨率，缺省为960*640
+
         director->setOpenGLView(glview);
-    }
+	}
 
     // create a scene. it's an autorelease object
-    auto scene = AnimateScene::createScene();
-
+    auto scene = MapScene::createScene();
     // run
     director->runWithScene(scene);
 
