@@ -17,38 +17,34 @@ public:
 	int pos_combat;
 	std::string path;
 	Json::Value anim;
+	AttackCallBack userAction;
+	AttackCallBack deadAction;
 
+	int blood;
 	static Actor* createActor(int index);
 	virtual bool init();
 	CREATE_FUNC(Actor);
 
-	void attack(Actor* target, int type, const AttackCallBack& callback);
-
-	void suffer(float time);
-
-	void defend();
-
 	void idle();
-
 	void dead();
-
+	void defend();
 	void stand(int type);
-
+	void suffer(float time);
 	void walk(cocos2d::Vec2 target, bool canMove);
+	void attack(Actor* target, int type/*, const AttackCallBack& callback*/);
 
-	void setSpeed(float speed) { _speed = speed; }
-	float getSpeed() { return _speed; }
+	inline void setSpeed(float speed) { _speed = speed; }
+	inline float getSpeed() { return _speed; }
 
-	void setStatus(CombatStatus status) { _status = status; }
-	CombatStatus getStatus() { return _status; }
+	inline void setStatus(CombatStatus status) { _status = status; }
+	inline CombatStatus getStatus() { return _status; }
 
-
+	void setBloodBarDisplay(bool show);
+	void updateBloodBarValue();
+	void showDamageValues();
 private:
-	cocos2d::Animate* createAnimate(const std::vector<std::string>& names, float delay);
 
-	cocos2d::Animate* createAnimate(const std::string& prefix, const int& count, float delay = 0.08f, std::string type = ".tga", bool reverse = false);
 	//meta
-	//animations
 
 	float _speed;
 	CombatStatus _status;//0 未准备 1已准备 2施法中 

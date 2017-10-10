@@ -1,12 +1,14 @@
 #include "Actor.h"
 #include "Magic.h"
 #include "ActorParser.h"
-#include <fstream>
+#include "ui/CocosGUI.h"
+#include "AnimationManager.h"
 USING_NS_CC;
 using namespace std;
 #define TAG_IDLE 10
 
 int calDirection(Vec2 dir);
+Texture2D* snap(Animate* animate);
 
 bool Actor::init()
 {
@@ -28,46 +30,69 @@ Actor* Actor::createActor(int index)
 	actor->id = root["id"].asInt();
 	actor->name = root["name"].asString();
 	actor->anim = root["combat_anim"];
+	actor->blood = 1000;
+
+	Texture2D* texture = snap(AnimationManager::createAnimate(actor->path, actor->anim["idle"]["indexes"][actor->pos_combat].asString(), actor->anim["idle"]["numbers"][actor->pos_combat].asInt()));
+	Size sz = texture->getContentSize();
+	auto bg = ui::ImageView::create("mhxy/UI/combat_blood_bg.png");
+	bg->setTag(100);
+	bg->setVisible(false);
+	bg->setAnchorPoint(Vec2(0.5, 0));
+	bg->setPosition(Vec2(sz.width / 2, sz.height));
+	actor->addChild(bg);
+
+	auto bar = ui::ImageView::create("mhxy/UI/combat_blood.png");
+	bar->setTag(101);
+	bar->setPosition(Vec2(3, 1));
+	bar->setAnchorPoint(Vec2(0, 0));
+	bg->addChild(bar);
+
+	auto value = Label::createWithTTF("400", "fonts/simhei.ttf", 20);
+	value->setTag(102);
+	value->enableBold();
+	value->setVisible(false);
+	value->setAnchorPoint(Vec2(0.5, 0));
+	value->getFontAtlas()->setAliasTexParameters();
+	value->setTextColor(Color4B::RED);
+	value->setPosition(Vec2(sz.width / 2, sz.height / 2));
+	actor->addChild(value,1);
 
 	return actor;
 }
-Animate* Actor::createAnimate(const std::vector<std::string>& names, float delay/*=0.1f*/)
-{
-	Vector<SpriteFrame*> animFrames;
-	for (auto iter = names.cbegin(); iter != names.cend(); iter++) {
-		Texture2D *texture = _director->getTextureCache()->addImage(*iter);
-		//texture->setAliasTexParameters();
-		Rect rect = Rect::ZERO;
-		rect.size = texture->getContentSize();
-		animFrames.pushBack(SpriteFrame::createWithTexture(texture, rect));
-	}
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, delay);
-	Animate* animate = Animate::create(animation);
-	return animate;
-}
-Animate* Actor::createAnimate(const std::string& prefix, const int& count, float delay/*=0.1f*/, std::string type/*=".tga"*/, bool reverse/*=false*/)
-{
-	std::vector<std::string> names;
-	for (int i = 0; i < count; i++)
-	{
-		int index = !reverse ? i : count - i - 1;
-		stringstream ss;
-		if(index < 10)
-			ss << path << prefix <<"0"<< index << type;
-		else
-			ss << path << prefix << index << type;
-		names.push_back(ss.str());
-	}
-	//if (!getTexture())
-	//{
-		setTexture(names[0]);
-	//}
-	return createAnimate(names, delay);
-}
 
+void Actor::setBloodBarDisplay(bool show) {
+	auto bar = getChildByTag(100);
+	bar->setVisible(show);
+}
+void Actor::updateBloodBarValue() {
+	auto bar = getChildByTag(100);
+	auto blood_bar = bar->getChildByTag(101);
+	float scale = blood / 1000.f;
+	if (scale < 0)
+		scale = 0;
+	blood_bar->setScaleX(scale);
+}
+void Actor::showDamageValues() {
+	auto lb = getChildByTag(102);
+	lb->setVisible(true);
+
+	Vec2 movement = Vec2(0, 20);
+	auto move1 = MoveBy::create(0.1, movement);
+	auto move2 = MoveBy::create(0.1, movement*(-1));
+
+	auto delay = DelayTime::create(0.5);
+
+	auto after_delay = CallFunc::create([=]() {
+		lb->setVisible(false);
+	});
+
+	auto seq = Sequence::create(move1, move2, delay, after_delay, nullptr);
+	lb->runAction(seq);
+}
+#pragma region Animation
 void Actor::idle()
 {
-	auto idle = RepeatForever::create(createAnimate(anim["idle"]["indexes"][pos_combat].asString(), anim["idle"]["numbers"][pos_combat].asInt()));
+	auto idle = RepeatForever::create(AnimationManager::createAnimate(path,anim["idle"]["indexes"][pos_combat].asString(), anim["idle"]["numbers"][pos_combat].asInt()));
 	idle->setTag(TAG_IDLE);
 	runAction(idle);
 }
@@ -84,16 +109,30 @@ void Actor::suffer(float time)
 	auto move1 = EaseIn::create(MoveBy::create(0.2, movement), 2);
 	auto move2 = EaseOut::create(MoveBy::create(0.2, movement*(-1)), 2);
 
-	auto suffer = createAnimate(anim["suffer"]["indexes"][pos_combat].asString(), anim["suffer"]["numbers"][pos_combat].asInt());
-
+	auto suffer = AnimationManager::createAnimate(path,anim["suffer"]["indexes"][pos_combat].asString(), anim["suffer"]["numbers"][pos_combat].asInt());
+	
 	auto delay = DelayTime::create(time);
 
 	auto after_delay = CallFunc::create([=]() {
 		stopActionByTag(TAG_IDLE);
 		magic->play();
+
+		blood -= 400;
+		updateBloodBarValue();
+		showDamageValues();
 	});
+
+	auto values = getChildByTag(102);
 	auto after_attacked = CallFunc::create([=]() {
-		idle();
+		if (blood <= 0)
+		{
+			magic->setVisible(false);
+			values->setVisible(false);
+			setBloodBarDisplay(false);
+			dead();
+		}
+		else
+			idle();
 		
 	});
 
@@ -102,21 +141,31 @@ void Actor::suffer(float time)
 }
 void Actor::defend()
 {
-	runAction(createAnimate(anim["defend"]["indexes"][pos_combat].asString(), anim["defend"]["numbers"][pos_combat].asInt()));
+	runAction(AnimationManager::createAnimate(path,anim["defend"]["indexes"][pos_combat].asString(), anim["defend"]["numbers"][pos_combat].asInt()));
 }
 void Actor::dead()
 {
-	runAction(createAnimate(anim["dead"]["indexes"][pos_combat].asString(), anim["dead"]["numbers"][pos_combat].asInt()));
+	auto dead = AnimationManager::createAnimate(path, anim["dead"]["indexes"][pos_combat].asString(), anim["dead"]["numbers"][pos_combat].asInt());
+
+	auto finish = CallFunc::create([=]() {
+		if (deadAction)
+			deadAction();
+	});
+
+	auto seq = Sequence::create(dead, finish, nullptr);
+	runAction(seq);
 }
 
 void Actor::stand(int type)
 {
-	auto stand = RepeatForever::create(createAnimate(anim["stand"]["indexes"][type].asString(), anim["stand"]["numbers"][type].asInt()));
+	auto stand = RepeatForever::create(AnimationManager::createAnimate(path,anim["stand"]["indexes"][type].asString(), anim["stand"]["numbers"][type].asInt()));
 
 	runAction(stand);
 }
-void Actor::attack(Actor* target, int type, const AttackCallBack& callback)
+void Actor::attack(Actor* target, int type/*, const AttackCallBack& callback*/)
 {
+	if (target->blood <= 0)
+		return;
 	setStatus(CombatStatus::ON_ATTACK);
 
 	stopAllActions();
@@ -124,41 +173,42 @@ void Actor::attack(Actor* target, int type, const AttackCallBack& callback)
 	Vec2 offsetPos = pos_combat == 0 ? Vec2(110, -40) : Vec2(-90, 50);
 	Vec2 targetPos = target->getPosition() + offsetPos;
 	Vec2 movement = targetPos - getPosition();
-	//Vec2 movement = target->getPosition() - getPosition();
-	//movement = movement.getNormalized()*(movement.getLength() - 100);
 
 	auto move_forward = EaseIn::create(MoveBy::create(0.3, movement), 1.2);
 	auto move_back = EaseIn::create(MoveBy::create(0.3, movement*(-1)), 1.2);
 
-	auto combat_forward = createAnimate(anim["forward"]["indexes"][pos_combat].asString(), anim["forward"]["numbers"][pos_combat].asInt());
-	auto combat_back = createAnimate(anim["back"]["indexes"][(pos_combat + 2) % 4].asString(), anim["back"]["numbers"][(pos_combat + 2) % 4].asInt());
-	auto combat_action = createAnimate(anim["attacks"][type]["indexes"][pos_combat].asString(), anim["attacks"][type]["numbers"][pos_combat].asInt());
+	auto combat_forward = AnimationManager::createAnimate(path,anim["forward"]["indexes"][pos_combat].asString(), anim["forward"]["numbers"][pos_combat].asInt());
+	auto combat_back = AnimationManager::createAnimate(path,anim["back"]["indexes"][(pos_combat + 2) % 4].asString(), anim["back"]["numbers"][(pos_combat + 2) % 4].asInt());
+	auto combat_action = AnimationManager::createAnimate(path,anim["attacks"][type]["indexes"][pos_combat].asString(), anim["attacks"][type]["numbers"][pos_combat].asInt());
 
 	auto forward_spawn = Spawn::createWithTwoActions(move_forward, combat_forward);
 	auto back_spawn = Spawn::createWithTwoActions(move_back, combat_back);
 	auto finish = CallFunc::create([=]() {
 		idle();
 		setStatus(CombatStatus::UNPREPARED);
-		callback();
-		//target->attack(this, 1);
+		//callback();
+		if (userAction)
+			userAction();
+	});
+	auto bar = getChildByTag(100);
+	bar->runAction(move_forward);
+
+	auto beforeCombat = CallFunc::create([=]() {
+		bar->setVisible(false);
+	});
+	auto afterCombat = CallFunc::create([=]() {
+		bar->setVisible(true);
+		bar->runAction(move_back);
 	});
 
-	auto test = CallFunc::create([=]() {
-		Size sz = getContentSize();
-		auto bar = getChildByTag(100);
-		bar->setPosition(Vec2(sz.width / 2 + 50, sz.height + 20));
-	});
-	auto test1 = CallFunc::create([=]() {
-		Size sz = getContentSize();
-		auto bar = getChildByTag(100);
-		bar->setPosition(Vec2(sz.width / 2 , sz.height));
-	});
-	auto seq = Sequence::create(forward_spawn, test,combat_action, back_spawn,  finish, test1, nullptr);
+	auto seq = Sequence::create(forward_spawn, beforeCombat,combat_action, afterCombat,back_spawn,  finish, nullptr);
 	runAction(seq);
 
 	//target¶¯»­
 	float time = anim["attacks"][type]["key_time"][pos_combat].asFloat();
+
 	target->suffer(time);
+
 }
 
 void Actor::walk(Vec2 target, bool canMove) {
@@ -167,7 +217,7 @@ void Actor::walk(Vec2 target, bool canMove) {
 	Vec2 dir = target - getPosition();
 	int type = calDirection(dir);
 
-	auto move_action = RepeatForever::create(createAnimate(anim["walk"]["indexes"][type].asString(), anim["walk"]["numbers"][type].asInt()));
+	auto move_action = RepeatForever::create(AnimationManager::createAnimate(path,anim["walk"]["indexes"][type].asString(), anim["walk"]["numbers"][type].asInt()));
 	runAction(move_action);
 
 	auto move_forward = canMove ? (FiniteTimeAction *)MoveBy::create(dir.length() / 100, dir) : (FiniteTimeAction *)DelayTime::create(dir.length() / 100);
@@ -181,8 +231,15 @@ void Actor::walk(Vec2 target, bool canMove) {
 	runAction(seq);
 
 }
+#pragma endregion
 
-//private
+#pragma region private
+Texture2D* snap(Animate* animate)
+{
+	Vector<AnimationFrame*> frames = animate->getAnimation()->getFrames();
+	AnimationFrame* frame = frames.front();
+	return frame->getSpriteFrame()->getTexture();
+}
 int calDirection(Vec2 dir) {
 	int type = 0;
 	if (dir.x == 0) {
@@ -205,3 +262,6 @@ int calDirection(Vec2 dir) {
 	}
 	return type;
 }
+#pragma endregion
+
+

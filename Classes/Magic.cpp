@@ -1,6 +1,6 @@
 #include "Magic.h"
 #include <fstream>
-
+#include "AnimationManager.h"
 USING_NS_CC;
 using namespace std;
 bool Magic::init()
@@ -40,38 +40,11 @@ Magic* Magic::createMagic(std::string path)
 	magic->initWithFile(s.str());
 	return magic;
 }
-Animate* Magic::createAnimate(const std::vector<std::string>& names, float delay/*=0.1f*/)
-{
-	Vector<SpriteFrame*> animFrames;
-	for (auto iter = names.cbegin(); iter != names.cend(); iter++) {
-		Texture2D *texture = _director->getTextureCache()->addImage(*iter);
-		Rect rect = Rect::ZERO;
-		rect.size = texture->getContentSize();
-		animFrames.pushBack(SpriteFrame::createWithTexture(texture, rect));
-	}
-	Animation* animation = Animation::createWithSpriteFrames(animFrames, delay);
-	Animate* animate = Animate::create(animation);
-	return animate;
-}
-Animate* Magic::createAnimate(const std::string& prefix, const int& count, float delay/*=0.1f*/, std::string type/*=".tga"*/, bool reverse/*=false*/)
-{
-	std::vector<std::string> names;
-	for (int i = 0; i < count; i++)
-	{
-		int index = !reverse ? i : count - i - 1;
-		stringstream ss;
-		if (index < 10)
-			ss << path << prefix << "0" << index << type;
-		else
-			ss << path << prefix << index << type;
-		names.push_back(ss.str());
-	}
-	return createAnimate(names, delay);
-}
+
 
 void Magic::play()
 {
-	auto magic = createAnimate(startIndex, numbers);
+	auto magic = AnimationManager::createAnimate(path,startIndex, numbers);
 
 	auto after_attacked = CallFunc::create([=]() {
 		removeFromParent();

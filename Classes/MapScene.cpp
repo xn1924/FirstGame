@@ -1,7 +1,6 @@
 ﻿#include "MapScene.h"
-#include "CombatScene.h"
 #include "MainPanel.h"
-
+#include "NPCDialog.h"
 #ifdef WIN32
 #pragma execution_character_set("utf-8")
 #endif
@@ -25,7 +24,7 @@ bool MapScene::init()
 	if (!Layer::init()) {
 		return false;
 	}
-	Size sz = Director::getInstance()->getOpenGLView()->getFrameSize();
+	Size sz = Director::getInstance()->getVisibleSize();
 	Vec2 center = Vec2(sz.width / 2, sz.height / 2);
 
 	auto map = Sprite::create("mhxy/map/bjluzhou.jpg");
@@ -66,72 +65,9 @@ bool MapScene::init()
 			}
 		}
 		if (target == npc) {
-			auto iv = ui::ImageView::create("mhxy/avatar/creatures/1576-e84a1bd5-00000.tga");
-			iv->setAnchorPoint(Vec2(0, 1));
-			iv->setFlippedY(true);
-			iv->setPosition(Vec2(210, 340));
-			addChild(iv);
+			auto npcDialog = NPCDialog::create();
+			addChild(npcDialog);
 
-			{
-				auto iv = ui::ImageView::create("mhxy/UI/dialog.tga");
-				iv->setFlippedY(true);
-				iv->setPosition(Vec2(center.x, 260));
-				addChild(iv);
-
-				auto lb = Label::createWithTTF("敢撩我，找死啊！", "fonts/simhei.ttf", 14);
-				lb->setAnchorPoint(Vec2(0, 0.5));
-				lb->getFontAtlas()->setAliasTexParameters();
-				lb->setPosition(Vec2(178, 300));
-				addChild(lb);
-
-				auto button = ui::Button::create();
-				button->setTitleText("怕你不成！");
-				button->setTitleColor(Color3B::RED);
-				button->setTitleFontSize(12);
-				button->setAnchorPoint(Vec2(0, 0.5));
-				button->setPosition(Vec2(178, 260));
-				addChild(button);
-
-				button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case cocos2d::ui::Widget::TouchEventType::BEGAN:
-						break;
-					case cocos2d::ui::Widget::TouchEventType::MOVED:
-						break;
-					case cocos2d::ui::Widget::TouchEventType::ENDED:
-						Director::getInstance()->replaceScene(TransitionFade::create(1, CombatScene::createScene()));
-						break;
-					case cocos2d::ui::Widget::TouchEventType::CANCELED:
-						break;
-					default:
-						break;
-					}
-				});
-
-				button = ui::Button::create();
-				button->setTitleText("大侠饶命，点错了。");
-				button->setTitleColor(Color3B::RED);
-				button->setTitleFontSize(12);
-				button->setAnchorPoint(Vec2(0, 0.5));
-				button->setPosition(Vec2(178, 240));
-				button->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case cocos2d::ui::Widget::TouchEventType::BEGAN:
-						break;
-					case cocos2d::ui::Widget::TouchEventType::MOVED:
-						break;
-					case cocos2d::ui::Widget::TouchEventType::ENDED:
-						break;
-					case cocos2d::ui::Widget::TouchEventType::CANCELED:
-						break;
-					default:
-						break;
-					}
-				});
-				addChild(button);
-			}
 		}
 		else {
 			map->stopAllActions();

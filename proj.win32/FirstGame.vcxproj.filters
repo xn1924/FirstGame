@@ -31,6 +31,9 @@
     <Filter Include="src\ui">
       <UniqueIdentifier>{52452038-8d30-4e61-b095-8ec3459b00d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\utils\animate">
+      <UniqueIdentifier>{86c27da5-29d7-4b9d-ab1c-0992da825606}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -58,6 +61,12 @@
       <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\MainPanel.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AnimationManager.cpp">
+      <Filter>src\utils\animate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\NPCDialog.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,6 +99,12 @@
       <Filter>src\scenes</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MainPanel.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AnimationManager.h">
+      <Filter>src\utils\animate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\NPCDialog.h">
       <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>

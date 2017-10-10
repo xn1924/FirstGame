@@ -14,9 +14,6 @@ public:
 	void play();
 
 private:
-	cocos2d::Animate* createAnimate(const std::vector<std::string>& names, float delay);
-
-	cocos2d::Animate* createAnimate(const std::string& prefix, const int& count, float delay = 0.08f, std::string type = ".tga", bool reverse = false);
 	//animations
 	std::string path;
 	std::string startIndex;

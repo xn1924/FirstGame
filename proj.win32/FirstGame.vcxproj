@@ -151,22 +151,26 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   <ItemGroup>
     <ClCompile Include="..\Classes\Actor.cpp" />
     <ClCompile Include="..\Classes\ActorParser.cpp" />
+    <ClCompile Include="..\Classes\AnimationManager.cpp" />
     <ClCompile Include="..\Classes\CombatScene.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\Magic.cpp" />
     <ClCompile Include="..\Classes\MainPanel.cpp" />
     <ClCompile Include="..\Classes\MapScene.cpp" />
+    <ClCompile Include="..\Classes\NPCDialog.cpp" />
     <ClCompile Include="..\ThirdParties\jsoncpp\jsoncpp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\Actor.h" />
     <ClInclude Include="..\Classes\ActorParser.h" />
+    <ClInclude Include="..\Classes\AnimationManager.h" />
     <ClInclude Include="..\Classes\CombatScene.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\Magic.h" />
     <ClInclude Include="..\Classes\MainPanel.h" />
     <ClInclude Include="..\Classes\MapScene.h" />
+    <ClInclude Include="..\Classes\NPCDialog.h" />
     <ClInclude Include="..\ThirdParties\jsoncpp\json\json-forwards.h" />
     <ClInclude Include="..\ThirdParties\jsoncpp\json\json.h" />
     <ClInclude Include="main.h" />

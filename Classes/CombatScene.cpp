@@ -9,6 +9,8 @@
 #include "CombatScene.h"
 #include "MainPanel.h"
 #include "base/ccMacros.h"
+#include "MapScene.h"
+
 USING_NS_CC;
 using namespace std;
 
@@ -108,17 +110,18 @@ void CombatScene::run(Actor* target)
 {
 	std::vector<Actor *> enemy_list;
 	std::vector<Actor *> hero_list;
+
 	for each(auto node in this->getChildren())
 	{
-		if (node->getTag() == ENEMY_TAG) {
+		if (node->getTag() == HERO_TAG) {
+			hero_list.push_back(dynamic_cast<Actor *>(node));
+		}else if (node->getTag() == ENEMY_TAG) {
 			enemy_list.push_back(dynamic_cast<Actor *>(node));
 		}
-		else if (node->getTag() == HERO_TAG) {
-			hero_list.push_back(dynamic_cast<Actor *>(node));
-		}
 	}
+
 	std::sort(enemy_list.begin(), enemy_list.end(), [](Actor *node1, Actor *node2)
-	{   
+	{
 		if (node1->getSpeed() > node2->getSpeed())
 		{
 			return true;
@@ -126,20 +129,34 @@ void CombatScene::run(Actor* target)
 		return false;
 	});
 
-	Actor* actor = hero_list[0];
-	actor->attack(target, 0, [=]() {
-		enemy_list[0]->attack(actor, 0, [=]() {
-			enemy_list[1]->attack(actor, 1, [=]() {
-				enemy_list[2]->attack(actor, 2, [=]() {
-					enemy_list[3]->attack(actor, 1, [=]() {
-						enemy_list[4]->attack(actor, 2, [=]() {
-						});
-					});
-				});
-			});
-		});
-	});
+	Actor* hero = hero_list[0];
 
+	hero->userAction = [=]() {
+		enemy_list[0]->attack(hero, 2);
+	};
+	hero->deadAction = [=]() {
+		if (hero->blood <= 0) {
+			//Director::getInstance()->popScene();
+		}
+	};
+	for (int i = 0; i < enemy_list.size(); i++)
+	{
+		enemy_list[i]->userAction = [=]() {
+			if(i != enemy_list.size() - 1)
+				enemy_list[i + 1]->attack(hero, 2); 
+		};
+		enemy_list[i]->deadAction = [=]() {
+			for (int j = 0; j < enemy_list.size(); j++)
+			{
+				if (enemy_list[j]->blood > 0)
+					return;
+			}
+			Director::getInstance()->popScene();
+
+		};
+	}
+
+	hero->attack(target, 1);
 
 }
 void CombatScene::menuCallback(cocos2d::Ref *ref) {
@@ -153,20 +170,8 @@ Actor* createActor(int index, cocos2d::Vec2 pos, int pos_combat, float speed)
 	actor->setSpeed(speed);
 	actor->pos_combat = pos_combat;
 	actor->setPosition(pos);
+	actor->setBloodBarDisplay(true);
 	actor->idle();
-
-	Size sz = actor->getContentSize();
-	auto bg = ui::ImageView::create("mhxy/UI/combat_blood_bg.png");
-	bg->setTag(100);
-	bg->setAnchorPoint(Vec2(0.5, 0));
-	bg->setPosition(Vec2(sz.width/2, sz.height));
-	actor->addChild(bg);
-
-	auto bar = ui::ImageView::create("mhxy/UI/combat_blood.png");
-	bar->setAnchorPoint(Vec2(0, 0));
-	bar->setTag(101);
-	bar->setPosition(Vec2(3, 1));
-	bg->addChild(bar);
 
 	return actor;
 }
