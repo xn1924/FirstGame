@@ -29,14 +29,14 @@ Magic* Magic::createMagic(std::string path)
 
 
 	auto magic = Magic::create();
-	magic->setFlippedY(true);
+	//magic->setFlippedY(true);
 	magic->path = path;
 	magic->id = root["id"].asInt();
 	magic->name = root["name"].asString();
 	magic->numbers = root["numbers"].asInt();
 	magic->startIndex = root["indexes"].asString();
 	stringstream s;
-	s << path << magic->startIndex << "00.tga";
+	s << path << magic->startIndex << "00.png";
 	magic->initWithFile(s.str());
 	return magic;
 }
@@ -44,7 +44,8 @@ Magic* Magic::createMagic(std::string path)
 
 void Magic::play()
 {
-	auto magic = AnimationManager::createAnimate(path,startIndex, numbers);
+	setVisible(true);
+	auto magic = AnimationManager::createAnimate(path,startIndex, numbers,0.1f,".png");
 
 	auto after_attacked = CallFunc::create([=]() {
 		removeFromParent();

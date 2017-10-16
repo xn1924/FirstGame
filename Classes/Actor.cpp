@@ -21,18 +21,18 @@ bool Actor::init()
 Actor* Actor::createActor(int index)
 {		
 	auto actor = Actor::create();
-	actor->id = index;
+	actor->_id = index;
 
-	Json::Value root = ActorParser::getValueForActor(index,actor->path);
+	Json::Value root = ActorParser::getValueForActor(index,actor->_path);
 
 	actor->setFlippedY(true);
 
-	actor->id = root["id"].asInt();
-	actor->name = root["name"].asString();
-	actor->anim = root["combat_anim"];
-	actor->blood = 1000;
+	actor->_id = root["id"].asInt();
+	actor->_name = root["name"].asString();
+	actor->_anim = root["combat_anim"];
+	actor->_blood = 3000;
 
-	Texture2D* texture = snap(AnimationManager::createAnimate(actor->path, actor->anim["idle"]["indexes"][actor->pos_combat].asString(), actor->anim["idle"]["numbers"][actor->pos_combat].asInt()));
+	Texture2D* texture = snap(AnimationManager::createAnimate(actor->_path, actor->_anim["idle"]["indexes"][actor->getCombatPos()].asString(), actor->_anim["idle"]["numbers"][actor->getCombatPos()].asInt()));
 	Size sz = texture->getContentSize();
 	auto bg = ui::ImageView::create("mhxy/UI/combat_blood_bg.png");
 	bg->setTag(100);
@@ -67,7 +67,7 @@ void Actor::setBloodBarDisplay(bool show) {
 void Actor::updateBloodBarValue() {
 	auto bar = getChildByTag(100);
 	auto blood_bar = bar->getChildByTag(101);
-	float scale = blood / 1000.f;
+	float scale = _blood / 3000.f;
 	if (scale < 0)
 		scale = 0;
 	blood_bar->setScaleX(scale);
@@ -92,7 +92,7 @@ void Actor::showDamageValues() {
 #pragma region Animation
 void Actor::idle()
 {
-	auto idle = RepeatForever::create(AnimationManager::createAnimate(path,anim["idle"]["indexes"][pos_combat].asString(), anim["idle"]["numbers"][pos_combat].asInt()));
+	auto idle = RepeatForever::create(AnimationManager::createAnimate(_path,_anim["idle"]["indexes"][_combatPos].asString(), _anim["idle"]["numbers"][_combatPos].asInt()));
 	idle->setTag(TAG_IDLE);
 	runAction(idle);
 }
@@ -103,13 +103,14 @@ void Actor::suffer(float time)
 	Vec2 magic_center = Vec2(magic->getContentSize().width / 2, magic->getContentSize().height / 2);
 	Vec2 center = Vec2(getContentSize().width / 2, getContentSize().height / 2);
 	magic->setPosition(center - magic_center);
+	magic->setVisible(false);
 	addChild(magic);
 
-	Vec2 movement = Vec2(pos_combat==0?20:-20, 0);
+	Vec2 movement = Vec2(_combatPos ==0?20:-20, 0);
 	auto move1 = EaseIn::create(MoveBy::create(0.2, movement), 2);
 	auto move2 = EaseOut::create(MoveBy::create(0.2, movement*(-1)), 2);
 
-	auto suffer = AnimationManager::createAnimate(path,anim["suffer"]["indexes"][pos_combat].asString(), anim["suffer"]["numbers"][pos_combat].asInt());
+	auto suffer = AnimationManager::createAnimate(_path,_anim["suffer"]["indexes"][_combatPos].asString(), _anim["suffer"]["numbers"][_combatPos].asInt());
 	
 	auto delay = DelayTime::create(time);
 
@@ -117,14 +118,14 @@ void Actor::suffer(float time)
 		stopActionByTag(TAG_IDLE);
 		magic->play();
 
-		blood -= 400;
+		_blood -= 400;
 		updateBloodBarValue();
 		showDamageValues();
 	});
 
 	auto values = getChildByTag(102);
 	auto after_attacked = CallFunc::create([=]() {
-		if (blood <= 0)
+		if (_blood <= 0)
 		{
 			magic->setVisible(false);
 			values->setVisible(false);
@@ -141,11 +142,11 @@ void Actor::suffer(float time)
 }
 void Actor::defend()
 {
-	runAction(AnimationManager::createAnimate(path,anim["defend"]["indexes"][pos_combat].asString(), anim["defend"]["numbers"][pos_combat].asInt()));
+	runAction(AnimationManager::createAnimate(_path,_anim["defend"]["indexes"][_combatPos].asString(), _anim["defend"]["numbers"][_combatPos].asInt()));
 }
 void Actor::dead()
 {
-	auto dead = AnimationManager::createAnimate(path, anim["dead"]["indexes"][pos_combat].asString(), anim["dead"]["numbers"][pos_combat].asInt());
+	auto dead = AnimationManager::createAnimate(_path, _anim["dead"]["indexes"][_combatPos].asString(), _anim["dead"]["numbers"][_combatPos].asInt());
 
 	auto finish = CallFunc::create([=]() {
 		if (deadAction)
@@ -158,28 +159,28 @@ void Actor::dead()
 
 void Actor::stand(int type)
 {
-	auto stand = RepeatForever::create(AnimationManager::createAnimate(path,anim["stand"]["indexes"][type].asString(), anim["stand"]["numbers"][type].asInt()));
+	auto stand = RepeatForever::create(AnimationManager::createAnimate(_path,_anim["stand"]["indexes"][type].asString(), _anim["stand"]["numbers"][type].asInt()));
 
 	runAction(stand);
 }
 void Actor::attack(Actor* target, int type/*, const AttackCallBack& callback*/)
 {
-	if (target->blood <= 0)
+	if (target->_blood <= 0)
 		return;
 	setStatus(CombatStatus::ON_ATTACK);
 
 	stopAllActions();
 	//attacker¶¯»­
-	Vec2 offsetPos = pos_combat == 0 ? Vec2(110, -40) : Vec2(-90, 50);
+	Vec2 offsetPos = _combatPos == 0 ? Vec2(110, -40) : Vec2(-90, 50);
 	Vec2 targetPos = target->getPosition() + offsetPos;
 	Vec2 movement = targetPos - getPosition();
 
 	auto move_forward = EaseIn::create(MoveBy::create(0.3, movement), 1.2);
 	auto move_back = EaseIn::create(MoveBy::create(0.3, movement*(-1)), 1.2);
 
-	auto combat_forward = AnimationManager::createAnimate(path,anim["forward"]["indexes"][pos_combat].asString(), anim["forward"]["numbers"][pos_combat].asInt());
-	auto combat_back = AnimationManager::createAnimate(path,anim["back"]["indexes"][(pos_combat + 2) % 4].asString(), anim["back"]["numbers"][(pos_combat + 2) % 4].asInt());
-	auto combat_action = AnimationManager::createAnimate(path,anim["attacks"][type]["indexes"][pos_combat].asString(), anim["attacks"][type]["numbers"][pos_combat].asInt());
+	auto combat_forward = AnimationManager::createAnimate(_path,_anim["forward"]["indexes"][_combatPos].asString(), _anim["forward"]["numbers"][_combatPos].asInt());
+	auto combat_back = AnimationManager::createAnimate(_path,_anim["back"]["indexes"][(_combatPos + 2) % 4].asString(), _anim["back"]["numbers"][(_combatPos + 2) % 4].asInt());
+	auto combat_action = AnimationManager::createAnimate(_path,_anim["attacks"][type]["indexes"][_combatPos].asString(), _anim["attacks"][type]["numbers"][_combatPos].asInt());
 
 	auto forward_spawn = Spawn::createWithTwoActions(move_forward, combat_forward);
 	auto back_spawn = Spawn::createWithTwoActions(move_back, combat_back);
@@ -205,7 +206,7 @@ void Actor::attack(Actor* target, int type/*, const AttackCallBack& callback*/)
 	runAction(seq);
 
 	//target¶¯»­
-	float time = anim["attacks"][type]["key_time"][pos_combat].asFloat();
+	float time = _anim["attacks"][type]["key_time"][_combatPos].asFloat();
 
 	target->suffer(time);
 
@@ -217,7 +218,7 @@ void Actor::walk(Vec2 target, bool canMove) {
 	Vec2 dir = target - getPosition();
 	int type = calDirection(dir);
 
-	auto move_action = RepeatForever::create(AnimationManager::createAnimate(path,anim["walk"]["indexes"][type].asString(), anim["walk"]["numbers"][type].asInt()));
+	auto move_action = RepeatForever::create(AnimationManager::createAnimate(_path,_anim["walk"]["indexes"][type].asString(), _anim["walk"]["numbers"][type].asInt()));
 	runAction(move_action);
 
 	auto move_forward = canMove ? (FiniteTimeAction *)MoveBy::create(dir.length() / 100, dir) : (FiniteTimeAction *)DelayTime::create(dir.length() / 100);

@@ -88,5 +88,14 @@ bool NPCDialog::init()
 		addChild(button);
 	}
 
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->setSwallowTouches(true);
+	listener->onTouchBegan = [](Touch* touch, Event* event) 
+	{
+		return true; 
+	};
+	listener->onTouchMoved = [](Touch* touch, Event* event) {};
+	listener->onTouchEnded = [=](Touch* touch, Event* event) {};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	return true;
 }

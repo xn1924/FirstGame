@@ -40,7 +40,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 		//屏幕和设计分辨率不匹配，会导致UI交互事件Touch坐标异常
         glview->setFrameSize(800, 600);//屏幕分辨率
 		glview->setDesignResolutionSize(800, 600, ResolutionPolicy::EXACT_FIT);//设计分辨率，缺省为960*640
-
+		glview->setCursorVisible(false);
         director->setOpenGLView(glview);
 	}
 

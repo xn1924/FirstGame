@@ -24,6 +24,31 @@ bool MapScene::init()
 	if (!Layer::init()) {
 		return false;
 	}
+
+	auto cursor = Sprite::create("mhxy/UI/cursor_nor.png");
+	_cursor = Node::create();
+	_cursor->addChild(cursor);
+	addChild(_cursor, 10000);
+
+	auto listenerMouse = EventListenerMouse::create();
+	listenerMouse->onMouseMove = [&](cocos2d::EventMouse* event) {
+		Point mouse = event->getLocation();
+		mouse.y = 600 - mouse.y;
+		_cursor->setVisible(true);
+		_cursor->setPosition(Point(mouse.x + 16, mouse.y - 16));
+	};
+	listenerMouse->onMouseDown = [&](cocos2d::EventMouse* event) {
+		_cursor->removeAllChildren();
+		auto cursor = Sprite::create("mhxy/UI/cursor_point_down.png");
+		_cursor->addChild(cursor);
+	};
+	listenerMouse->onMouseUp = [&](cocos2d::EventMouse* event) {
+		_cursor->removeAllChildren();
+		auto cursor = Sprite::create("mhxy/UI/cursor_nor.png");
+		_cursor->addChild(cursor);
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listenerMouse, this);
+
 	Size sz = Director::getInstance()->getVisibleSize();
 	Vec2 center = Vec2(sz.width / 2, sz.height / 2);
 
@@ -32,7 +57,7 @@ bool MapScene::init()
 	addChild(map);
 
 	auto npc = Actor::createActor(10000);
-	npc->pos_combat = 2;
+	npc->setCombatPos(2);
 	npc->setPosition(map->getContentSize().width / 2 + 300, map->getContentSize().height / 2 + 300);
 	npc->idle();
 	map->addChild(npc);
@@ -82,11 +107,15 @@ bool MapScene::init()
 
 		return true;
 	};
-
+	
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, map);
 	return true;
 }
-
+void MapScene::onEnter()
+{
+	Layer::onEnter();
+	_cursor->setVisible(false);
+}
 //private
 Actor * createActor(int index, cocos2d::Vec2 pos, int standType)
 {
