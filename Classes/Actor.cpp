@@ -6,7 +6,7 @@
 USING_NS_CC;
 using namespace std;
 #define TAG_IDLE 10
-
+#define PI 3.1415926535898
 int calDirection(Vec2 dir);
 Texture2D* snap(Animate* animate);
 
@@ -250,16 +250,16 @@ int calDirection(Vec2 dir) {
 		type = dir.x > 0 ? 4 : 0;
 	}
 	else if (dir.x > 0 && dir.y > 0) {
-		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 2 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 3 : 4;
+		type = fabs(dir.y / dir.x) > tan(PI * 3 / 8) ? 2 : fabs(dir.y / dir.x) > tan(PI / 8) ? 3 : 4;
 	}
 	else if (dir.x > 0 && dir.y < 0) {
-		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 6 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 5 : 4;
+		type = fabs(dir.y / dir.x) > tan(PI * 3 / 8) ? 6 : fabs(dir.y / dir.x) > tan(PI / 8) ? 5 : 4;
 	}
 	else if (dir.x < 0 && dir.y > 0) {
-		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 2 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 1 : 0;
+		type = fabs(dir.y / dir.x) > tan(PI * 3 / 8) ? 2 : fabs(dir.y / dir.x) > tan(PI / 8) ? 1 : 0;
 	}
 	else if (dir.x < 0 && dir.y < 0) {
-		type = fabs(dir.y / dir.x) > tan(std::_Pi * 3 / 8) ? 6 : fabs(dir.y / dir.x) > tan(std::_Pi / 8) ? 7 : 0;
+		type = fabs(dir.y / dir.x) > tan(PI * 3 / 8) ? 6 : fabs(dir.y / dir.x) > tan(PI / 8) ? 7 : 0;
 	}
 	return type;
 }

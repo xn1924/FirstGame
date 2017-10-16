@@ -1,7 +1,11 @@
 #pragma once
 #include "cocos2d.h"
-#include <json/json.h>
 
+#ifdef WIN32
+#include <json/json.h>
+#else
+#include "json.h"
+#endif
 class Magic : public cocos2d::Sprite
 {
 public:

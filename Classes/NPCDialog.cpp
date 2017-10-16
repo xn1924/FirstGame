@@ -29,14 +29,14 @@ bool NPCDialog::init()
 		iv->setPosition(Vec2(center.x, 260));
 		addChild(iv);
 
-		auto lb = Label::createWithTTF("¸ÒÁÃÎÒ£¬ÕÒËÀ°¡£¡", "fonts/simhei.ttf", 14);
+		auto lb = Label::createWithTTF("å°å­ï¼Œæ•¢ä¸æ•¢å’Œçˆ·è¿‡ä¸¤æ‹›ï¼Ÿ", "fonts/simhei.ttf", 14);
 		lb->setAnchorPoint(Vec2(0, 0.5));
 		lb->getFontAtlas()->setAliasTexParameters();
 		lb->setPosition(Vec2(178, 300));
 		addChild(lb);
 
 		auto button = ui::Button::create();
-		button->setTitleText("ÅÂÄã²»³É£¡");
+		button->setTitleText("è¿›å…¥æˆ˜æ–—!");
 		button->setTitleColor(Color3B::RED);
 		button->setTitleFontSize(12);
 		button->setAnchorPoint(Vec2(0, 0.5));
@@ -64,7 +64,7 @@ bool NPCDialog::init()
 		});
 
 		button = ui::Button::create();
-		button->setTitleText("´óÏÀÈÄÃü£¬µã´íÁË¡£");
+		button->setTitleText("èµ¶ç´§ç¦»å¼€!");
 		button->setTitleColor(Color3B::RED);
 		button->setTitleFontSize(12);
 		button->setAnchorPoint(Vec2(0, 0.5));

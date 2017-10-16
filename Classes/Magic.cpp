@@ -36,7 +36,7 @@ Magic* Magic::createMagic(std::string path)
 	magic->numbers = root["numbers"].asInt();
 	magic->startIndex = root["indexes"].asString();
 	stringstream s;
-	s << path << magic->startIndex << "00.png";
+	s << path << magic->startIndex << "00.tga";
 	magic->initWithFile(s.str());
 	return magic;
 }
@@ -45,7 +45,7 @@ Magic* Magic::createMagic(std::string path)
 void Magic::play()
 {
 	setVisible(true);
-	auto magic = AnimationManager::createAnimate(path,startIndex, numbers,0.1f,".png");
+	auto magic = AnimationManager::createAnimate(path,startIndex, numbers,0.1f,".tga");
 
 	auto after_attacked = CallFunc::create([=]() {
 		removeFromParent();

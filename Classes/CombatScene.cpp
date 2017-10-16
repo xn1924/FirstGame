@@ -175,13 +175,14 @@ void CombatScene::run(Actor* target)
 
 	std::vector<Actor *> enemy_list;
 	std::vector<Actor *> hero_list;
-
-	for each(auto node in this->getChildren())
+    
+    auto list = this->getChildren();
+    for(auto iter = list.begin();iter < list.end();iter++)
 	{
-		if (node->getTag() == HERO_TAG) {
-			hero_list.push_back(dynamic_cast<Actor *>(node));
-		}else if (node->getTag() == ENEMY_TAG) {
-			enemy_list.push_back(dynamic_cast<Actor *>(node));
+		if ((*iter)->getTag() == HERO_TAG) {
+			hero_list.push_back(dynamic_cast<Actor *>(*iter));
+		}else if ((*iter)->getTag() == ENEMY_TAG) {
+			enemy_list.push_back(dynamic_cast<Actor *>(*iter));
 		}
 	}
 
@@ -233,20 +234,20 @@ void CombatScene::menuCallback(Ref *ref) {
 }
 Actor* CombatScene::getActorAtPosition(Vec2 pos) {
 	Actor* target = nullptr;
-
-	for each (auto sprite in this->getChildren())
+    auto list = getChildren();
+    for (auto iter = list.begin();iter<list.end();iter++)
 	{
-		auto bounds = sprite->getBoundingBox();
+		auto bounds = (*iter)->getBoundingBox();
 		if (bounds.containsPoint(pos)) {
 			if (target == nullptr)
 			{
-				target = dynamic_cast<Actor*>(sprite);
+				target = dynamic_cast<Actor*>(*iter);
 			}
 			else {
-				Vec2 v1 = pos - sprite->getPosition();
+				Vec2 v1 = pos - (*iter)->getPosition();
 				Vec2 v2 = pos - target->getPosition();
 				if (v1.getLength() <= v2.getLength())
-					target = dynamic_cast<Actor*>(sprite);
+					target = dynamic_cast<Actor*>(*iter);
 			}
 		}
 	}

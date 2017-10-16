@@ -40,8 +40,8 @@ bool MainPanel::init()
 	iv->setPosition(Vec2(0, 521));
 	addChild(iv);
 
-	//auto lb = Label::createWithSystemFont("±±¾ããòÖÝ", "simhei", 16);
-	auto lb = Label::createWithTTF("±±¾ããòÖÝ", "fonts/simhei.ttf", 12);
+	//auto lb = Label::createWithSystemFont("Â±Â±Â¾Ã£Ã£Ã²Ã–Ã", "simhei", 16);
+	auto lb = Label::createWithTTF("åŒ—ä¿±åºå·ž", "fonts/simhei.ttf", 12);
 	lb->getFontAtlas()->setAliasTexParameters();
 	lb->setPosition(Vec2(60, 580));
 	addChild(lb);

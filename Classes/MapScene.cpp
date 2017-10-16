@@ -1,4 +1,4 @@
-﻿#include "MapScene.h"
+#include "MapScene.h"
 #include "MainPanel.h"
 #include "NPCDialog.h"
 #ifdef WIN32
@@ -71,21 +71,21 @@ bool MapScene::init()
 	auto touchListener = EventListenerTouchOneByOne::create();
 	touchListener->onTouchBegan = [=](Touch* touch, Event* event)->bool {
 		Node* target = nullptr;
-		auto layer = event->getCurrentTarget();
-		for each (auto sprite in layer->getChildren())
+		auto list = map->getChildren();
+        for(auto iter = list.begin();iter < list.end();iter++)
 		{
-			auto bounds = sprite->getBoundingBox();
-			Vec2 touchInNode = layer->convertToNodeSpace(touch->getLocation());
+			auto bounds = (*iter)->getBoundingBox();
+			Vec2 touchInNode = map->convertToNodeSpace(touch->getLocation());
 			if (bounds.containsPoint(touchInNode)) {
 				if (target == nullptr)
 				{
-					target = sprite;
+					target = (*iter);
 				}
 				else {
-					Vec2 v1 = touch->getLocation() - sprite->getPosition();
+					Vec2 v1 = touch->getLocation() - (*iter)->getPosition();
 					Vec2 v2 = touch->getLocation() - target->getPosition();
 					if (v1.getLength() <= v2.getLength())
-						target = sprite;
+						target = (*iter);
 				}
 			}
 		}

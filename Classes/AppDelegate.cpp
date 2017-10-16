@@ -35,12 +35,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("�λ�����");
+        glview = GLViewImpl::create("梦幻西游");
 
-		//��Ļ����Ʒֱ��ʲ�ƥ�䣬�ᵼ��UI�����¼�Touch�����쳣
-        glview->setFrameSize(800, 600);//��Ļ�ֱ���
-		glview->setDesignResolutionSize(800, 600, ResolutionPolicy::EXACT_FIT);//��Ʒֱ��ʣ�ȱʡΪ960*640
+		//ÆÁÄ»ºÍÉè¼Æ·Ö±æÂÊ²»Æ¥Åä£¬»áµ¼ÖÂUI½»»¥ÊÂ¼þTouch×ø±êÒì³£
+        glview->setFrameSize(800, 600);//ÆÁÄ»·Ö±æÂ
+		glview->setDesignResolutionSize(800, 600, ResolutionPolicy::EXACT_FIT);//Éè¼Æ·Ö±æÂÊ£¬È±Ê¡Îª960*640
 		glview->setCursorVisible(false);
+
         director->setOpenGLView(glview);
 	}
 

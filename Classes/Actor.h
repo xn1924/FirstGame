@@ -1,6 +1,12 @@
 #pragma once
 #include "cocos2d.h"
+
+#ifdef WIN32
 #include <json/json.h>
+#else
+#include "json.h"
+#endif
+
 
 
 class Actor : public cocos2d::Sprite

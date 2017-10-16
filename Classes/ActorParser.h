@@ -1,6 +1,10 @@
 #pragma once
-#include <json/json.h>
 
+#ifdef WIN32
+#include <json/json.h>
+#else
+#include "json.h"
+#endif
 class Actor;
 class ActorParser
 {
